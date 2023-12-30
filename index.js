@@ -1,9 +1,14 @@
-var express = require("express");
+const express = require("express");
+const userRoute = require("./src/routes/user.route");
+const connectDatabase = require("./src/database/database");
+
 var app = express();
 
-// respond with "hello world" when a GET request is made to the homepage
-app.get("/", function (req, res) {
-  res.send("hello world");
-});
+const port = 3000;
 
-app.listen(3000);
+connectDatabase();
+app.use(express.json());
+app.use("/user", userRoute);
+
+
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
