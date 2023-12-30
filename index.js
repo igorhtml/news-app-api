@@ -1,6 +1,6 @@
 import express from "express";
-import userRoute from "./src/routes/user.route";
-import connectDatabase from "./src/database/database";
+import userRoute from "./src/routes/user.route.js";
+import connectDatabase from "./src/database/database.js";
 
 var app = express();
 
