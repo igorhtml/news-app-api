@@ -22,7 +22,6 @@ const create = async (req, res) => {
         name: name,
         username: username,
         email: email,
-        password: password,
         avatar: avatar,
         background: background,
       },
