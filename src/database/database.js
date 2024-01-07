@@ -3,9 +3,7 @@ import mongoose from "mongoose";
 const connectDatabase = () => {
   console.log("Wait connection to database");
   mongoose
-    .connect(
-      "mongodb+srv://igorcesarhtml:zrkIrudi5dqcNATA@cluster0.vq127bo.mongodb.net/?retryWrites=true&w=majority"
-    )
+    .connect(process.env.MONGODB_URI)
     .then(() => console.log("mongoDB Atlas connected"))
     .catch((error) => console.log(error));
 };

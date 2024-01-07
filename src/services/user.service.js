@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-const createService = (body) => {
+const createUserService = (body) => {
   return User.create(body);
 };
 
@@ -23,7 +23,7 @@ const updateService = (
   );
 
 export default {
-  createService,
+  createUserService,
   findAllService,
   findByIdService,
   updateService,
