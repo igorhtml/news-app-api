@@ -4,11 +4,11 @@ const createUserService = (body) => {
   return User.create(body);
 };
 
-const findAllService = () => User.find();
+const findAllUserService = () => User.find();
 
-const findByIdService = (id) => User.findById(id);
+const findByIdUserService = (id) => User.findById(id);
 
-const updateService = (
+const updateUserService = (
   id,
   name,
   username,
@@ -24,7 +24,7 @@ const updateService = (
 
 export default {
   createUserService,
-  findAllService,
-  findByIdService,
-  updateService,
+  findAllUserService,
+  findByIdUserService,
+  updateUserService,
 };

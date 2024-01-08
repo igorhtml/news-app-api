@@ -18,7 +18,7 @@ const validId = (req, res, next) => {
 const validUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await userService.findByIdService(id);
+    const user = await userService.findByIdUserService(id);
 
     if (!user) {
       return res.status(400).send({ message: "User not found" });
@@ -33,4 +33,4 @@ const validUser = async (req, res, next) => {
   }
 };
 
-export {validId, validUser};
+export { validId, validUser };

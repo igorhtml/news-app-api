@@ -35,7 +35,7 @@ const create = async (req, res) => {
 
 const findAll = async (req, res) => {
   try {
-    const users = await userService.findAllService();
+    const users = await userService.findAllUserService();
 
     if (users.lenght === 0) {
       return res.status(400).send({ message: "No users registered" });
@@ -67,7 +67,7 @@ const update = async (req, res) => {
 
     const { id, user } = req;
 
-    await userService.updateService(
+    await userService.updateUserService(
       id,
       name,
       username,
