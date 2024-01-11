@@ -4,6 +4,7 @@ import {
   countNewsService,
   topNewsService,
   findByIdNewsService,
+  searchByTittleNewsService,
 } from "../services/news.service.js";
 
 const create = async (req, res) => {
@@ -102,7 +103,7 @@ const findById = async (req, res) => {
 
     const news = await findByIdNewsService(id);
     res.send({
-      return: {
+      result: {
         id: news._id,
         tittle: news.tittle,
         text: news.text,
@@ -118,4 +119,32 @@ const findById = async (req, res) => {
   }
 };
 
-export { create, findAll, findLast, findById };
+const searchByTittle = async (req, res) => {
+  try {
+    const { tittle } = req.query;
+    console.log(tittle);
+    const news = await searchByTittleNewsService(tittle);
+    if (news.length === 0) {
+      return res
+        .status(400)
+        .send({ message: "There are no news with this tittle" });
+    }
+
+    return res.send({
+      results: news.map((item) => ({
+        id: item._id,
+        tittle: item.tittle,
+        text: item.text,
+        banner: item.banner,
+        likes: item.likes,
+        comments: item.comments,
+        userName: item.user.name,
+        userAvatar: item.user.avatar,
+      })),
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+export { create, findAll, findLast, findById, searchByTittle };

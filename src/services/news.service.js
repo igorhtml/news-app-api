@@ -11,10 +11,17 @@ const findByIdNewsService = (id) => News.findById(id).populate("user");
 
 const countNewsService = () => News.countDocuments();
 
+const searchByTittleNewsService = (tittle) => {
+  console.log(tittle);
+  return News.find({ tittle: { $regex: `${tittle || ""}`, $options: "i" } })
+    .sort({ _id: -1 })
+    .populate("user");
+};
 export {
   createNewsService,
   findAllNewsService,
   countNewsService,
   topNewsService,
   findByIdNewsService,
+  searchByTittleNewsService,
 };
