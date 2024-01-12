@@ -11,12 +11,24 @@ const findByIdNewsService = (id) => News.findById(id).populate("user");
 
 const countNewsService = () => News.countDocuments();
 
-const searchByTittleNewsService = (tittle) => {
-  console.log(tittle);
-  return News.find({ tittle: { $regex: `${tittle || ""}`, $options: "i" } })
+const searchByTittleNewsService = (title) =>
+  News.find({ tittle: { $regex: `${title || ""}`, $options: "i" } })
     .sort({ _id: -1 })
     .populate("user");
+
+const searchByUserService = (id) => {
+  return News.find({ user: id }).sort({ _id: -1 }).populate("user");
 };
+
+const updateNewsService = (id, title, text, banner) =>
+  News.findOneAndUpdate(
+    { _id: id },
+    { title, text, banner },
+    { rawResult: true }
+  );
+
+const eraseNewsService = (id) => News.findByIdAndDelete( id );
+
 export {
   createNewsService,
   findAllNewsService,
@@ -24,4 +36,7 @@ export {
   topNewsService,
   findByIdNewsService,
   searchByTittleNewsService,
+  searchByUserService,
+  updateNewsService,
+  eraseNewsService,
 };

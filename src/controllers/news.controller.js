@@ -5,19 +5,22 @@ import {
   topNewsService,
   findByIdNewsService,
   searchByTittleNewsService,
+  searchByUserService,
+  updateNewsService,
+  eraseNewsService,
 } from "../services/news.service.js";
 
 const create = async (req, res) => {
   try {
-    const { tittle, text, banner } = req.body;
-    if (!tittle && !text && !banner) {
+    const { title, text, banner } = req.body;
+    if (!title || !text || !banner) {
       return res
         .status(400)
         .send({ message: "Submit all fields to create a new" });
     }
 
     await createNewsService({
-      tittle,
+      title,
       text,
       banner,
       user: req.userId,
@@ -54,7 +57,6 @@ const findAll = async (req, res) => {
     if (news.lenght === 0) {
       return res.status(400).send({ message: "No news" });
     }
-
     res.send({
       nextUrl,
       previousUrl,
@@ -63,7 +65,7 @@ const findAll = async (req, res) => {
       total,
       results: news.map((item) => ({
         id: item._id,
-        tittle: item.tittle,
+        title: item.title,
         text: item.text,
         banner: item.banner,
         likes: item.likes,
@@ -82,7 +84,7 @@ const findLast = async (req, res) => {
     const lastNew = await topNewsService();
     const result = {
       id: lastNew._id,
-      tittle: lastNew.tittle,
+      title: lastNew.title,
       text: lastNew.text,
       banner: lastNew.banner,
       likes: lastNew.likes,
@@ -105,7 +107,7 @@ const findById = async (req, res) => {
     res.send({
       result: {
         id: news._id,
-        tittle: news.tittle,
+        title: news.title,
         text: news.text,
         banner: news.banner,
         likes: news.likes,
@@ -119,11 +121,10 @@ const findById = async (req, res) => {
   }
 };
 
-const searchByTittle = async (req, res) => {
+const searchByTitle = async (req, res) => {
   try {
-    const { tittle } = req.query;
-    console.log(tittle);
-    const news = await searchByTittleNewsService(tittle);
+    const { title } = req.query;
+    const news = await searchByTittleNewsService(title);
     if (news.length === 0) {
       return res
         .status(400)
@@ -133,7 +134,7 @@ const searchByTittle = async (req, res) => {
     return res.send({
       results: news.map((item) => ({
         id: item._id,
-        tittle: item.tittle,
+        title: item.title,
         text: item.text,
         banner: item.banner,
         likes: item.likes,
@@ -147,4 +148,66 @@ const searchByTittle = async (req, res) => {
   }
 };
 
-export { create, findAll, findLast, findById, searchByTittle };
+const searchByUser = async (req, res) => {
+  try {
+    const id = req.userId;
+
+    const news = await searchByUserService(id);
+    if (news.length === 0) {
+      return res
+        .status(400)
+        .send({ message: "There are no news with this tittle" });
+    }
+
+    return res.send({
+      results: news.map((item) => ({
+        id: item._id,
+        title: item.title,
+        text: item.text,
+        banner: item.banner,
+        likes: item.likes,
+        comments: item.comments,
+        userName: item.user.name,
+        userAvatar: item.user.avatar,
+      })),
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, text, banner } = req.body;
+    if (!title && !text && !banner) {
+      return res
+        .status(400)
+        .send({ message: "Submit at least one field to update a new" });
+    }
+
+    const news = await findByIdNewsService(id);
+
+    if (news.user._id != req.userId) {
+      return res.status(400).send({ message: "Only can update your news" });
+    }
+    await updateNewsService(id, title, text, banner);
+    return res.status(200).send({ message: "Sucessfully updated new" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+export const erase = async (req, res) => {
+  const { id } = req.params;
+  const news = await findByIdNewsService(id);
+  if (news.user._id != req.userId) {
+    return res.status(400).send({ message: "Only can delte your news" });
+  }
+
+  await eraseNewsService(id);
+
+  return res.sendStatus(200);
+};
+
+export { create, findAll, findLast, findById, searchByTitle, searchByUser };
