@@ -12,7 +12,7 @@ const findByIdNewsService = (id) => News.findById(id).populate("user");
 const countNewsService = () => News.countDocuments();
 
 const searchByTittleNewsService = (title) =>
-  News.find({ tittle: { $regex: `${title || ""}`, $options: "i" } })
+  News.find({ title: { $regex: `${title || ""}`, $options: "i" } })
     .sort({ _id: -1 })
     .populate("user");
 
@@ -27,7 +27,16 @@ const updateNewsService = (id, title, text, banner) =>
     { rawResult: true }
   );
 
-const eraseNewsService = (id) => News.findByIdAndDelete( id );
+const eraseNewsService = (id) => News.findByIdAndDelete(id);
+
+export const likeNewsService = (idNews, userId) =>
+  News.findOneAndUpdate(
+    { _id: idNews, "likes.userId": { $nin: [userId] } },
+    { $push: { likes: { userId, created: new Date() } } }
+  );
+
+export const deleteLikeNewsService = (idNews, userId) =>
+  News.findOneAndUpdate({ _id: idNews }, { $pull: { likes: { userId } } });
 
 export {
   createNewsService,

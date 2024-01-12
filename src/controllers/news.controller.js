@@ -8,6 +8,8 @@ import {
   searchByUserService,
   updateNewsService,
   eraseNewsService,
+  likeNewsService,
+  deleteLikeNewsService,
 } from "../services/news.service.js";
 
 const create = async (req, res) => {
@@ -124,6 +126,7 @@ const findById = async (req, res) => {
 const searchByTitle = async (req, res) => {
   try {
     const { title } = req.query;
+    console.log(title);
     const news = await searchByTittleNewsService(title);
     if (news.length === 0) {
       return res
@@ -199,15 +202,35 @@ export const update = async (req, res) => {
 };
 
 export const erase = async (req, res) => {
-  const { id } = req.params;
-  const news = await findByIdNewsService(id);
-  if (news.user._id != req.userId) {
-    return res.status(400).send({ message: "Only can delte your news" });
+  try {
+    const { id } = req.params;
+    const news = await findByIdNewsService(id);
+    if (news.user._id != req.userId) {
+      return res.status(400).send({ message: "Only can delte your news" });
+    }
+
+    await eraseNewsService(id);
+
+    return res.sendStatus(200);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
+};
 
-  await eraseNewsService(id);
+export const likeNews = async (req, res) => {
+  try {
+    const idNews = req.params.id;
+    const userId = req.userId;
 
-  return res.sendStatus(200);
+    const like = await likeNewsService(idNews, userId);
+    if (!like) {
+      await deleteLikeNewsService(idNews, userId);
+      return res.status(200).send({ message: "Like succesfully removed" });
+    }
+    return res.status(200).send({ message: "Liked" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
 export { create, findAll, findLast, findById, searchByTitle, searchByUser };
