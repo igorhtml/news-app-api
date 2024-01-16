@@ -9,6 +9,10 @@
     },
     "servers": [
       {
+        "url": "https://newsapp-api-93rl.onrender.com",
+        "description": "Render server (Deploy)"
+      },
+      {
         "url": "http://localhost:3000",
         "description": "Local server"
       }
