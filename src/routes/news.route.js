@@ -28,6 +28,10 @@ router.patch("/like/:id", authMiddleware, likeNews);
 router.patch("/update/:id", authMiddleware, update);
 router.delete("/erase/:id", authMiddleware, erase);
 router.patch("/addComment/:id", authMiddleware, addComment);
-router.patch("/removeComment/:idNews/:idComment", authMiddleware, removeComment);
+router.patch(
+  "/removeComment/:idNews/:idComment",
+  authMiddleware,
+  removeComment
+);
 
 export default router;
